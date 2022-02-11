@@ -1,5 +1,5 @@
 export const Constants = {
-    'navigationHeaderLabel': 'Nagivation',
-    'filtersHeaderLabel': 'Filters',
-    'filtersSpendingLabel': 'Spending'
+    navigationHeaderLabel: 'Nagivation',
+    filtersHeaderLabel: 'Filters',
+    filtersSpendingLabel: 'Spending'
 };
