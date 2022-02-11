@@ -1,0 +1,30 @@
+.cardContainer {
+    align-content: baseline;
+    background-color: #E7EBF0;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    min-height: 96%;
+    max-height: 96%;
+    overflow-y: scroll;
+    padding: 15px;
+}
+
+.card-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    height: fit-content;
+    margin: 15px;
+    padding: 30px;
+    text-align: center;
+    width: 15%;
+}
+
+.card-app {
+    margin-top: 5px;
+}
+
+.card-spending {
+    margin-top: 14;
+}

@@ -1,0 +1,32 @@
+.tree-container {
+    list-style-type: none;
+    padding-left: 0
+}
+
+.treeNode-parent {
+    cursor: pointer;
+    display: flex;
+    padding: 5px
+}
+
+.treeNode-arrow {
+    padding-right: 8px;
+    padding-top: 2px
+}
+
+.treeNode-label:hover {
+    font-size: large;
+    font-weight: bold;
+}
+
+.activeCaret {
+    transform: rotate(180deg);
+}
+
+.activeLabel {
+    font-weight: bold;
+}
+
+.treeNode-children {
+    margin-left: 20px;
+}

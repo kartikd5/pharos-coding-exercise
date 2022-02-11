@@ -1,0 +1,17 @@
+.slider-label {
+    color: #808080;
+    margin: 10px 0;
+}
+
+.slider-container {
+    position: relative;
+}
+
+.slider-input {
+    width: 100%
+}
+
+.slider-range {
+    display: flex;
+    justify-content: space-between;
+}
