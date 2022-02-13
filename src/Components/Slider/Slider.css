@@ -1,3 +1,13 @@
+.slider-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slider-selected {
+    font-weight: bold;
+}
+
 .slider-label {
     color: #808080;
     margin: 10px 0;

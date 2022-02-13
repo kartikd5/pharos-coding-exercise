@@ -50,13 +50,18 @@ const TreeNode = memo(({ children, label }: TreeNodeProps) => {
                         <BsFillCaretDownFill className={childVisible ? 'activeCaret' : ''} />
                     )}
                 </div>
-                <div
-                    className={`treeNode-label
-                        ${(filters.bizCapability === label) ? 'activeLabel' : ''}`
-                    }
-                    onClick={() => setFilters({...filters, bizCapability: label})}
-                >
-                    {label}
+                <div className='treeNode-label-container'>
+                    <div
+                        className={`treeNode-label
+                            ${(filters.bizCapability === label) ? 'activeLabel' : ''}`
+                        }
+                        onClick={() => setFilters({...filters, bizCapability: label})}
+                    >
+                        {label}
+                    </div>
+                    {!Array.isArray(children) && (
+                        <div className='treeNode-badge'>{Object.keys(children).length}</div>
+                    )}
                 </div>
             </div>
 

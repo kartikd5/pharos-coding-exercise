@@ -28,11 +28,11 @@
 
 .sidebarContainer-content {
     max-height: 90%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .separator {
-    border-top: 4px solid #bbb;
+    border-top: 1px solid #bbb;
     border-radius: 5px;
 }
 
