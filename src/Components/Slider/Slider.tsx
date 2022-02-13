@@ -14,12 +14,12 @@ export const Slider = ({ label, maxRange, minRange }: SliderProps) => {
     const [value, setValue] = useState<number>(minRange);
 
     useEffect(() => {
-        setValue(minRange);
-    }, [minRange]);
+        setValue(maxRange);
+    }, [maxRange]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(parseInt(e.target.value));
-        setFilters({...filters, minSpending: parseInt(e.target.value)});
+        setFilters({...filters, minSpending: (maxRange + minRange) - parseInt(e.target.value)});
     }
 
     return (
@@ -31,7 +31,7 @@ export const Slider = ({ label, maxRange, minRange }: SliderProps) => {
                     max ={maxRange}
                     min={minRange}
                     onChange={handleChange}
-                    title={value.toString()}
+                    title={filters.minSpending?.toString() ?? minRange.toString()}
                     type="range"
                     value={value}
                 />
