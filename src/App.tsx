@@ -10,7 +10,7 @@ interface ContextFilters {
 export interface Filters {
   bizCapability?: string;
   id?: string;
-  startingRange?: number;
+  minSpending?: number;
 }
 
 export const FilterContext = createContext<ContextFilters>({} as ContextFilters);

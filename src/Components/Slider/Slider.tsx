@@ -1,5 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FilterContext } from '../../App';
+import { formatCurrency } from '../../utils';
 import './Slider.css';
 
 interface SliderProps {
@@ -10,11 +11,15 @@ interface SliderProps {
 
 export const Slider = ({ label, maxRange, minRange }: SliderProps) => {
     const { filters, setFilters } = useContext(FilterContext);
-    const [value, setValue] = useState<number>(filters.startingRange ?? 0);
+    const [value, setValue] = useState<number>(minRange);
+
+    useEffect(() => {
+        setValue(minRange);
+    }, [minRange]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(parseInt(e.target.value));
-        setFilters({...filters, startingRange: parseInt(e.target.value)});
+        setFilters({...filters, minSpending: parseInt(e.target.value)});
     }
 
     return (
@@ -23,7 +28,7 @@ export const Slider = ({ label, maxRange, minRange }: SliderProps) => {
             <div className='slider-container'>
                 <input
                     className='slider-input'
-                    max={maxRange}
+                    max ={maxRange}
                     min={minRange}
                     onChange={handleChange}
                     title={value.toString()}
@@ -32,8 +37,8 @@ export const Slider = ({ label, maxRange, minRange }: SliderProps) => {
                 />
             </div>
             <div className='slider-range'>
-                <div className='slider-range-start'>${minRange}</div>
-                <div className='slider-range-end'>${maxRange}</div>
+                <div className='slider-range-start'>{formatCurrency(maxRange)}</div>
+                <div className='slider-range-end'>{formatCurrency(minRange)}</div>
             </div>
         </>
     )

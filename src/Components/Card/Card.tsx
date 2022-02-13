@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { Data } from '../../Api/Data';
+import { formatCurrency } from '../../utils';
 import './Card.css';
 
 interface CardContainerProps {
@@ -24,7 +25,7 @@ const Card = memo(({ data }: CardProps) => {
     return (
         <div className='card-container'>
             <h3 className='card-app'>{data.name}</h3>
-            <div className='card-spending'>Total spend: ${data.spend}</div>
+            <div className='card-spending'>Total Spend: {formatCurrency(data.spend)}</div>
         </div>
     )
 })

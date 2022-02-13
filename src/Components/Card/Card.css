@@ -3,7 +3,6 @@
     background-color: #E7EBF0;
     display: flex;
     flex-flow: row wrap;
-    justify-content: center;
     min-height: 96%;
     max-height: 96%;
     overflow-y: scroll;
@@ -18,7 +17,7 @@
     margin: 15px;
     padding: 30px;
     text-align: center;
-    width: 15%;
+    width: 150px;
 }
 
 .card-app {

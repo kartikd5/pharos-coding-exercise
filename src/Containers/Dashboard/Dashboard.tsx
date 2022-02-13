@@ -1,25 +1,43 @@
 import { useEffect, useCallback, useContext, useState } from 'react';
 import { Data } from '../../Api/Data';
-import { CardContainer, Slider, Tree, TreeData } from '../../Components';
+import { CardContainer, Slider, Tree, TreeData, TreeNodeChildren } from '../../Components';
 import { Filters, FilterContext } from '../../App';
 import { Constants } from '../../Constants';
 import './Dashboard.css';
 
-//  Convert the actual data.json file data to the UI Tree component friendly format
-function convertData(data: Data[] | []): TreeData[] {
-    const convertedData: TreeData[] = data.map(d => {
-        let obj: TreeData = (({ id, name, spend }) => ({ id, name, spend }))(d);
-        obj['label'] = d.BCAP1;
-        obj['children'] = [{
-            label: d.BCAP2!,
-            children: [{
-                label: d.BCAP3!
-            }]
-        }];
+function sortObjectByKey(treeObject: any): TreeData {
+    const ordered =  Object.keys(treeObject).sort().reduce((obj: TreeData, key: string) => {
+        obj[key] = treeObject[key];
         return obj;
+    }, {});
+
+    return ordered;
+}
+
+//  Convert the actual data.json file data to the UI Tree component friendly format
+function convertData(data: Data[] | []): TreeData {
+    let convertedData: TreeData = {} as TreeData;
+
+    data.forEach((d: Data) => {
+        const appData: TreeNodeChildren = (({ id, name, spend }) => ({ id, name, spend }))(d);
+
+        convertedData[d.BCAP1] = convertedData[d.BCAP1] || {};
+        convertedData[d.BCAP1][d.BCAP2!] = convertedData[d.BCAP1][d.BCAP2!] || {};
+        convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!] = convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!] || [];
+        convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!].push(appData);
     });
 
-    return convertedData;
+    let ordered: TreeData = convertedData;
+
+    ordered = sortObjectByKey(ordered);
+    Object.keys(ordered).forEach(k => {
+        ordered[k] = sortObjectByKey(ordered[k]);
+        Object.keys(ordered[k]).forEach(j => {
+            ordered[k][j] = sortObjectByKey(ordered[k][j]);
+        })
+    })
+
+    return ordered;
 }
 
 //  Filter the data based on business capabilities and total spending value
@@ -29,7 +47,7 @@ function filterData(data: Data[] | [], filters: Filters): Data[] {
             (d.BCAP1 === filters.bizCapability ||
             d.BCAP2 === filters.bizCapability ||
             d.BCAP3 === filters.bizCapability) &&
-            d.spend >= (filters.startingRange ?? 0)
+            d.spend >= (filters.minSpending ?? 0)
         );
     } else {
         return [] as Data[];
@@ -37,24 +55,19 @@ function filterData(data: Data[] | [], filters: Filters): Data[] {
 }
 
 export const Dashboard = () => {
+    const { filters } = useContext(FilterContext);
     const [actualData, setActualData] = useState<Data[] | []>([]);
-    const [sidebarData, setSidebarData] = useState<TreeData[] | []>([]);
+    const [sidebarData, setSidebarData] = useState<TreeData>({});
     const [filteredData, setFilteredData] = useState<Data[] | []>([]);
 
     const maxRange = Math.max.apply(Math, actualData.map(d => d.spend));
     const minRange = Math.min.apply(Math, actualData.map(d => d.spend));
 
-    const { filters } = useContext(FilterContext);
-
-    const getData = () => {
+    useEffect(() => {
         fetch('data.json').then(res => res.json()).then((data: Data[]) => {
             setActualData(data);
             setSidebarData(convertData(data));
         });
-    }
-
-    useEffect(() => {
-        getData();
     }, []);
 
     const getFilteredData = useCallback(() => filterData(actualData, filters), [actualData, filters]);

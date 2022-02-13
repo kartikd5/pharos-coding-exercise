@@ -8,7 +8,8 @@
 }
 
 .slider-input {
-    width: 100%
+    direction: rtl;
+    width: 100%;
 }
 
 .slider-range {
