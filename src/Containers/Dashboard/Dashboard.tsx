@@ -121,7 +121,7 @@ export const Dashboard = () => {
                     <CardContainer data={filteredData} />
                 ) : (
                     <div className='dashboard-alttext'>
-                        No application data to display
+                        {Constants.noDataToDisplay}
                     </div>
                 )}
             </div>
