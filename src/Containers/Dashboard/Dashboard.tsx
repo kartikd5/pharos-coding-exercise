@@ -15,6 +15,7 @@ function sortObjectByKey(treeObject: any): TreeData {
     return treeObject;
 }
 
+//  Convert the actual data.json file data to the UI Tree component friendly format
 function convertData(data: Data[] | []): TreeData {
     let convertedData: TreeData = {} as TreeData;
 
@@ -38,6 +39,7 @@ function convertData(data: Data[] | []): TreeData {
     return sortedData;
 }
 
+//  Filter the data based on business capabilities and total spending value
 function filterData(data: Data[] | [], filters: Filters) {
     let filteredData: Data[] = [], totalCount: number = 0, filteredCount: number = 0;
     if (filters?.bizCapability?.length) {
