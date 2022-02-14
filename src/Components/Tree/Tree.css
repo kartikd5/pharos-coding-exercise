@@ -38,11 +38,11 @@
 .treeNode-badge {
     background-color: #FF0000;
     color: #fff;
-    width: 18px;
     border-radius: 50%;
     text-align: center;
     font-size: 15px;
     position: absolute;
     bottom: 12px;
     left: 101%;
+    padding: 1px 5px;
 }

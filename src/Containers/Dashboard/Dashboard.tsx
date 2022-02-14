@@ -1,57 +1,63 @@
 import { useEffect, useCallback, useContext, useState } from 'react';
 import { Data } from '../../Api/Data';
-import { CardContainer, Slider, Tree, TreeData, TreeNodeChildren } from '../../Components';
+import { CardContainer, Slider, Tree, TreeData } from '../../Components';
 import { Filters, FilterContext } from '../../App';
 import { Constants } from '../../Constants';
 import './Dashboard.css';
 
 function sortObjectByKey(treeObject: any): TreeData {
-    const ordered =  Object.keys(treeObject).sort().reduce((obj: TreeData, key: string) => {
-        obj[key] = treeObject[key];
-        return obj;
-    }, {});
+    Object.keys(treeObject).sort().forEach((key: string) => {
+        let value = treeObject[key];
+        delete treeObject[key];
+        treeObject[key] = value;
+    });
 
-    return ordered;
+    return treeObject;
 }
 
-//  Convert the actual data.json file data to the UI Tree component friendly format
 function convertData(data: Data[] | []): TreeData {
     let convertedData: TreeData = {} as TreeData;
 
     data.forEach((d: Data) => {
-        const appData: TreeNodeChildren = (({ id, name, spend }) => ({ id, name, spend }))(d);
-
         convertedData[d.BCAP1] = convertedData[d.BCAP1] || {};
+        convertedData[d.BCAP1]['count'] = (convertedData[d.BCAP1!]['count'] ?? 0) + 1;
         convertedData[d.BCAP1][d.BCAP2!] = convertedData[d.BCAP1][d.BCAP2!] || {};
-        convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!] = convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!] || [];
-        convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!].push(appData);
+        convertedData[d.BCAP1][d.BCAP2!]['count'] = (convertedData[d.BCAP1][d.BCAP2!]['count'] ?? 0) + 1;
+        convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!] = convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!] || {};
+        convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!]['count'] = (convertedData[d.BCAP1][d.BCAP2!][d.BCAP3!]['count'] ?? 0) + 1;
     });
 
-    let ordered: TreeData = convertedData;
-
-    ordered = sortObjectByKey(ordered);
-    Object.keys(ordered).forEach(k => {
-        ordered[k] = sortObjectByKey(ordered[k]);
-        Object.keys(ordered[k]).forEach(j => {
-            ordered[k][j] = sortObjectByKey(ordered[k][j]);
+    const sortedData: TreeData = sortObjectByKey(convertedData);
+    Object.keys(sortedData).forEach(k => {
+        sortedData[k] = sortObjectByKey(sortedData[k]);
+        Object.keys(sortedData[k]).forEach(j => {
+            sortedData[k][j] = sortObjectByKey(sortedData[k][j]);
         })
-    })
+    });
 
-    return ordered;
+    return sortedData;
 }
 
-//  Filter the data based on business capabilities and total spending value
-function filterData(data: Data[] | [], filters: Filters): Data[] {
+function filterData(data: Data[] | [], filters: Filters) {
+    let filteredData: Data[] = [], totalCount: number = 0, filteredCount: number = 0;
     if (filters?.bizCapability?.length) {
-        return data?.filter(d =>
-            (d.BCAP1 === filters.bizCapability ||
+        filteredData = data?.filter(d =>
+            d.BCAP1 === filters.bizCapability ||
             d.BCAP2 === filters.bizCapability ||
-            d.BCAP3 === filters.bizCapability) &&
-            d.spend >= (filters.minSpending ?? 0)
+            d.BCAP3 === filters.bizCapability
         );
-    } else {
-        return [] as Data[];
+
+        totalCount = filteredData.length;
+
+        if (filters.minSpending) {
+            filteredData = filteredData.filter(d => d.spend >= filters.minSpending!);
+            filteredCount = filteredData.length;
+        } else {
+            filteredCount = totalCount;
+        }
     }
+
+    return { data: filteredData, totalCount, filteredCount };
 }
 
 export const Dashboard = () => {
@@ -59,6 +65,8 @@ export const Dashboard = () => {
     const [actualData, setActualData] = useState<Data[] | []>([]);
     const [sidebarData, setSidebarData] = useState<TreeData>({});
     const [filteredData, setFilteredData] = useState<Data[] | []>([]);
+    const [totalCount, setTotalCount] = useState<number>(0);
+    const [filteredCount, setFilteredCount] = useState<number>(0);
 
     const maxRange = Math.max.apply(Math, actualData.map(d => d.spend));
     const minRange = Math.min.apply(Math, actualData.map(d => d.spend));
@@ -73,7 +81,10 @@ export const Dashboard = () => {
     const getFilteredData = useCallback(() => filterData(actualData, filters), [actualData, filters]);
 
     useEffect(() => {
-        setFilteredData(getFilteredData);
+        const { data, totalCount, filteredCount } = getFilteredData();
+        setFilteredData(data);
+        setTotalCount(totalCount);
+        setFilteredCount(filteredCount);
     }, [getFilteredData]);
 
     return (
@@ -84,13 +95,15 @@ export const Dashboard = () => {
                         {Constants.navigationHeaderLabel}
                     </h3>
                     <div className='sidebarContainer-content'>
-                        <Tree data={sidebarData} />
+                        <Tree actualData={actualData} data={sidebarData} />
                     </div>
                 </div>
                 <hr className='separator' />
                 <div className='slider-container'>
                     <h3 className='sliderContainer-header'>
-                        {Constants.filtersHeaderLabel}
+                        {Constants.filtersHeaderLabel} {totalCount !== 0 && (
+                            <span>{`(${filteredCount}/${totalCount})`}</span>
+                        )}
                     </h3>
                     <div className='sliderContainer-content'>
                         <Slider
@@ -106,7 +119,7 @@ export const Dashboard = () => {
                     <CardContainer data={filteredData} />
                 ) : (
                     <div className='dashboard-alttext'>
-                        No data to display
+                        No application data to display
                     </div>
                 )}
             </div>

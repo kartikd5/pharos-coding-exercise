@@ -26,9 +26,9 @@ export const Slider = ({ label, maxRange, minRange }: SliderProps) => {
         <>
             <div className='slider-header-container'>
                 {label && (<div className='slider-label'>{label}</div>)}
-                <div className='slider-selected'>{formatCurrency(filters.minSpending ?? minRange)}</div>
+                <div className='slider-selected'>{`>=`} {formatCurrency(filters.minSpending ?? minRange)}</div>
             </div>
-            
+
             <div className='slider-container'>
                 <input
                     className='slider-input'
