@@ -43,19 +43,17 @@ function convertData(data: Data[] | []): TreeData {
 function filterData(data: Data[] | [], filters: Filters) {
     let filteredData: Data[] = [], totalCount: number = 0, filteredCount: number = 0;
     if (filters?.bizCapability?.length) {
-        filteredData = data?.filter(d =>
+        filteredData = data.filter(d =>
             d.BCAP1 === filters.bizCapability ||
             d.BCAP2 === filters.bizCapability ||
             d.BCAP3 === filters.bizCapability
         );
 
-        totalCount = filteredData.length;
+        totalCount = filteredCount = filteredData.length;
 
         if (filters.minSpending) {
             filteredData = filteredData.filter(d => d.spend >= filters.minSpending!);
             filteredCount = filteredData.length;
-        } else {
-            filteredCount = totalCount;
         }
     }
 
@@ -97,7 +95,7 @@ export const Dashboard = () => {
                         {Constants.navigationHeaderLabel}
                     </h3>
                     <div className='sidebarContainer-content'>
-                        <Tree actualData={actualData} data={sidebarData} />
+                        <Tree data={sidebarData} />
                     </div>
                 </div>
                 <hr className='separator' />

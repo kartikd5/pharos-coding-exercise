@@ -1,7 +1,6 @@
 import React, { memo, useContext, useState } from 'react';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import { FilterContext } from '../../App';
-import { Data } from '../../Api/Data';
 import './Tree.css';
 
 export interface TreeData {
@@ -9,24 +8,22 @@ export interface TreeData {
 }
 
 interface TreeProps {
-    actualData: Data[] | [];
     data: TreeData;
 }
 
 interface TreeNodeProps {
-    actualData: Data[] | [];
     label: string;
     children: TreeData;
     count: number;
 }
 
-export const Tree = memo(({ actualData, data }: TreeProps) => {
+export const Tree = memo(({ data }: TreeProps) => {
     return (
         <div className='tree'>
             <ul className='tree-container'>
                 {Object.keys(data).map((key: string, index: number) => {
                     return key!=='count' && (
-                        <TreeNode actualData={actualData} children={data[key]} count={data[key]['count'] ?? 0} key={index} label={key} />
+                        <TreeNode children={data[key]} count={data[key]['count']} key={index} label={key} />
                     )}
                 )}
             </ul>
@@ -34,7 +31,7 @@ export const Tree = memo(({ actualData, data }: TreeProps) => {
     )
 })
 
-const TreeNode = memo(({ actualData, children, count, label }: TreeNodeProps) => {
+const TreeNode = memo(({ children, count, label }: TreeNodeProps) => {
 
     const [childVisible, setChildVisibility] = useState(false);
     const { filters, setFilters } = useContext(FilterContext);
@@ -65,7 +62,7 @@ const TreeNode = memo(({ actualData, children, count, label }: TreeNodeProps) =>
 
             {!Array.isArray(children) && childVisible && (
                 <div className='treeNode-children'>
-                    <Tree actualData={actualData} data={children as TreeData} />
+                    <Tree data={children as TreeData} />
                 </div>
             )}
         </li>
