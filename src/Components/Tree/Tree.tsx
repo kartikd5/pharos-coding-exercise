@@ -60,7 +60,7 @@ const TreeNode = memo(({ children, count, label }: TreeNodeProps) => {
                 </div>
             </div>
 
-            {!Array.isArray(children) && childVisible && (
+            {childVisible && (
                 <div className='treeNode-children'>
                     <Tree data={children as TreeData} />
                 </div>
